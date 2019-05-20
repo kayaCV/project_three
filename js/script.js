@@ -82,27 +82,54 @@ $('.activities input').change(function(e) {
         }
     }
     
-   // Inside the activity change​ event listener:
-// Use an if else ​statement to check if the clicked input is checked or unchecked — the
-// .checked​ property will be helpful here
-// If the input is checked, add the cost to the total cost variable above, else subtract
-// the cost — the .checked​ property will be helpful here
-// totalActivityCost += resultingPrice;
-// $newDiv.innerHtml = `Total: \$ ${totalActivityCost}`;
-// FInally, display the cost — set the text of the total cost element you created above
-// equal to the string ‘Total: $’ concatenated with the current value of the total cost
-// variable above
-    if(this.checked) {
+// Display the cost
+    if(this.checked) {                 // if the clicked input is checked, add the cost to the total cost variable; display total
         totalActivityCost += resultingPrice;
         $('.total-cost').text(`Total: \$ ${totalActivityCost}`);
-    } else { 
+    } else {                           // if the clicked input is unchecked, subtract the cost
         totalActivityCost -= resultingPrice;
         $('.total-cost').text(`Total: \$ ${totalActivityCost}`);
         if(totalActivityCost === 0){    // If totalActivityCost = 0, show no text in .total-cost div
             $('.total-cost').text('');
         }
     }
-    
-
-
 });
+
+/**
+ * SELECT PAYMENT
+ */
+//     Hide the “Select Payment Method” `option`
+//$('#payment option[value="select_method"]').remove(); // will remove "Select method" from drop down menu
+//$('#payment option[value="select_method"]').wrap('<span>').hide() // wrap it in a span, then hide WORKS! https://stackoverflow.com/questions/2031740/hide-select-option-in-ie-using-jquery
+///$('#payment option[value="select_method"]').prop('disabled',true); // disables option
+
+// ● Get the value of the payment select element, and if it’s equal to ‘Credit Card’, set the
+// credit card payment section to show, and set the other two options to hide. The
+// `.show()` and `.hide()` methods will be helpful here.
+// ● Repeat the above step with the PayPal and BitCoin options so that the selected
+// payment is shown and the others are hidden.
+//$('#payment').next().hide();
+$('#credit-card').hide();
+$('#credit-card').next().hide();
+$('#credit-card').next().next().hide();
+$('#payment').change(function (){
+    $('#payment option[value="select_method"]').wrap('<span>').hide()
+    $( "#payment option:selected" ).each(function() {
+        if($(this).text() === 'Credit Card') {
+            $('#credit-card').fadeIn();
+            $('#credit-card').next().hide();
+            $('#credit-card').next().next().hide();
+        } else if($(this).text() === 'PayPal'){
+            $('#credit-card').hide();
+            $('#credit-card').next().slideDown();
+            $('#credit-card').next().next().hide();
+        } else if($(this).text() === 'Bitcoin'){
+            $('#credit-card').hide();
+            $('#credit-card').next().hide();
+            $('#credit-card').next().next().slideDown();
+        }
+    });
+});
+
+
+
