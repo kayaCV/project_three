@@ -10,17 +10,17 @@ FSJS project 3 - Interactive Form
 // Set focus on Name text field
 $('#name').focus();
 
-// // Hide #other-title text field
+// Hide #other-title text field
 $('#other-title').hide();
 
 // Show #other-title text field only if "other" is chosen from #title drop down menu
 $('#title').change( function() {
-    this.value === 'other' ? $("#other-title").show() : $("#other-title").hide();
+    this.value === 'other' ? $("#other-title").slideDown() : $("#other-title").fadeOut();
 });
 
-/**
+/******
  * T-SHIRT INFO
- */
+ ******/
 
 // // Hide #colors-js-puns (T-Shirt Color) text field (extra credit)
 $('#colors-js-puns').hide();
@@ -45,89 +45,64 @@ $('#design').change(function() {
  * REGISTER FOR ACTIVITIES
  */
 
-// Create a DOM element like a span​ or div​ and store it in a global variable
-// Append the new element to the .activity​ section
-// You can check the elements tab in the Chrome DevTools to check that your span
-//element is in the DOM
-// Create a global variable to store total activity cost — initially set to 0 — don't use
-//const​ since you want to update this as needed
-
-
+// Div to hold total activities cost
 const $newDiv = $('<div>');
+$newDiv.addClass('total-cost');
 $('.activities').append($newDiv);
 let totalActivityCost = 0;
 
-// Create a change​ event listener for the activity section
-// Inside the event listener:
-// Create a variable to store the input​ element that was just clicked — event.target​ is
-//helpful here
-// Create a variable to store the text content of the parent label​ element of the input
-//element that was just clicked — the above variable combined with the .parent()​ and
-//.text()​ methods will be helpful here
-// Log out the variable storing the label’s text content to ensure you’re capturing the
-//right info
+// Change​ event listener for the activity section:
+    // Disable conflicting activities by comparing day and time for each activity
+    // Show total activity cost on div created above 
 
 $('.activities input').change(function(e) {
     e.preventDefault();
     const justClicked = $(this).parent();
     const justClickedText = justClicked.text()
 
-// Inside the activity change​ event listener:
-// Create a variable to store the index of the em dash ‘—​’ in the label’s text content you
-// stored in a variable above
-// Create a variable to store the index of the comma ‘,​’ in the label’s text content you
-//stored in a variable above
-// Create a variable to store the day and time text of the activity that’s been clicked —
-// the em dash and comma index variables above and the .slice()​ method are helpful here
-// Log out the day and time variable above to be sure you’re capturing the right info
-   //console.log(justClickedText);
-
-
-
     const begTime = justClickedText.indexOf('—'); // em dash: shift+option+minus (-); regular dash only capture after 4pm
     const endTime = justClickedText.indexOf(',');
-    const workshopSchedule = justClickedText.slice(begTime,endTime);
-    
+    const workshopSchedule = justClickedText.slice(begTime,endTime); // Get day and time for chosen activities
 
+    const $Sign = justClickedText.indexOf('$');   
+    const activityPrice = justClickedText.slice($Sign);  
+    const resultingPrice = parseInt(activityPrice.replace(/^[$,]+/g,"")); // Remove $; convert resultingPrice to number​ type
+     
+    const inputElements = $('.activities input')    // target all of the ‘.activities input’ ​elements
 
-// Inside the activity change​ event listener:
-// Create a variable to target all of the ‘.activities input’ ​elements
-    const inputElements = $('.activities input')
-    //console.log(inputElements);
-
-// Loop over all the input elements
     for(let i = 0; i < inputElements.length; i++) {
-// Inside the loop, create a variable to store the text content of the label​ parent of the
-// input​ element at the current loop iteration [i]
-        let inputElementsText = inputElements.eq(i).parent().text();
+        let inputElementsText = inputElements.eq(i).parent().text(); // text content of the label​ of input​ element at [i]
 
-        // Use an if​ statement to check if the current label text variable you just created
-// includes the day and time variable above &&​ if the current label text variable does not
-// equal the variable you created earlier with the label text of the element that was just
-// clicked — the .includes()​ method will be helpful for the first half of this clause
-
-// Inside the conditional, use an if else​ statement to check if the clicked input is
-// checked or unchecked
-   // If the input that was just clicked is checked
-     // disable the current input[i]​ element in the loop — the .disabled​ property will be
-     // helpful here
-   // Else
-     // enable the current input[i]​ element in the loop
-    
         if(inputElementsText.includes(workshopSchedule) && inputElementsText != justClickedText) {       
             if(this.checked) {
-                inputElements.eq(i).prop('disabled', true);
+                inputElements.eq(i).prop('disabled', true); // Disable the current input[i]​ element if the clicked input is checked
             } else { 
-                inputElements.eq(i).prop('disabled', false);
+                inputElements.eq(i).prop('disabled', false); // Enable the current input[i]​ element is unchecked
             }
         }
     }
-
-
-
-
-
-
-
     
+   // Inside the activity change​ event listener:
+// Use an if else ​statement to check if the clicked input is checked or unchecked — the
+// .checked​ property will be helpful here
+// If the input is checked, add the cost to the total cost variable above, else subtract
+// the cost — the .checked​ property will be helpful here
+// totalActivityCost += resultingPrice;
+// $newDiv.innerHtml = `Total: \$ ${totalActivityCost}`;
+// FInally, display the cost — set the text of the total cost element you created above
+// equal to the string ‘Total: $’ concatenated with the current value of the total cost
+// variable above
+    if(this.checked) {
+        totalActivityCost += resultingPrice;
+        $('.total-cost').text(`Total: \$ ${totalActivityCost}`);
+    } else { 
+        totalActivityCost -= resultingPrice;
+        $('.total-cost').text(`Total: \$ ${totalActivityCost}`);
+        if(totalActivityCost === 0){    // If totalActivityCost = 0, show no text in .total-cost div
+            $('.total-cost').text('');
+        }
+    }
+    
+
+
 });
