@@ -22,7 +22,7 @@ $('#title').change( function() {
  * T-SHIRT INFO
  ******/
 
-// // Hide #colors-js-puns (T-Shirt Color) text field (extra credit)
+// Hide #colors-js-puns (T-Shirt Color) text field: EXTRA CREDIT
 $('#colors-js-puns').hide();
 
 // Show T-Shirt color options that match the design selected after Design is selected
@@ -54,36 +54,40 @@ let totalActivityCost = 0;
 // Change​ event listener for the activity section:
     // Disable conflicting activities by comparing day and time for each activity
     // Show total activity cost on div created above 
-
 $('.activities input').change(function(e) {
-    e.preventDefault();
     const justClicked = $(this).parent();
     const justClickedText = justClicked.text()
-
     const begTime = justClickedText.indexOf('—'); // em dash: shift+option+minus (-); regular dash only capture after 4pm
     const endTime = justClickedText.indexOf(',');
     const workshopSchedule = justClickedText.slice(begTime,endTime); // Get day and time for chosen activities
-
     const $Sign = justClickedText.indexOf('$');   
     const activityPrice = justClickedText.slice($Sign);  
-    const resultingPrice = parseInt(activityPrice.replace(/^[$,]+/g,"")); // Remove $; convert resultingPrice to number​ type
-     
-    const inputElements = $('.activities input')    // target all of the ‘.activities input’ ​elements
+    const resultingPrice = parseInt(activityPrice.replace(/^[$,]+/g,"")); // Remove $; convert resultingPrice to number​ type    
+    const inputElements = $('.activities input');    // target all of the ‘.activities input’ ​elements
 
     for(let i = 0; i < inputElements.length; i++) {
         let inputElementsText = inputElements.eq(i).parent().text(); // text content of the label​ of input​ element at [i]
 
         if(inputElementsText.includes(workshopSchedule) && inputElementsText != justClickedText) {       
             if(this.checked) {
-                inputElements.eq(i).prop('disabled', true); // Disable the current input[i]​ element if the clicked input is checked
+                inputElements.eq(i).prop('disabled', true).parent().css({'text-decoration' : 'line-through', 'color': 'gray'}); // Disable and strikeout and gray out current input[i]​ element (conflicting activitiy) if clicked input is checked
+                //inputElements.eq(i).parent().css('color', 'gray');
             } else { 
-                inputElements.eq(i).prop('disabled', false); // Enable the current input[i]​ element is unchecked
+                inputElements.eq(i).prop('disabled', false).parent().css({'text-decoration': '', 'color' : '#000'}); // Enable the current input[i]​ element when clicked input is unchecked
             }
         }
     }
     
-// Display the cost
-    if(this.checked) {                 // if the clicked input is checked, add the cost to the total cost variable; display total
+/**
+ * .css({
+   'font-size' : '10px',
+   'width' : '30px',   #000
+   'height' : '10px'
+});
+ */
+
+// Display total cost
+    if(this.checked) {                 // if the clicked input is checked, add cost to the total cost variable; display total
         totalActivityCost += resultingPrice;
         $('.total-cost').text(`Total: \$ ${totalActivityCost}`);
     } else {                           // if the clicked input is unchecked, subtract the cost
@@ -98,38 +102,86 @@ $('.activities input').change(function(e) {
 /**
  * SELECT PAYMENT
  */
-//     Hide the “Select Payment Method” `option`
-//$('#payment option[value="select_method"]').remove(); // will remove "Select method" from drop down menu
-//$('#payment option[value="select_method"]').wrap('<span>').hide() // wrap it in a span, then hide WORKS! https://stackoverflow.com/questions/2031740/hide-select-option-in-ie-using-jquery
-///$('#payment option[value="select_method"]').prop('disabled',true); // disables option
 
-// ● Get the value of the payment select element, and if it’s equal to ‘Credit Card’, set the
-// credit card payment section to show, and set the other two options to hide. The
-// `.show()` and `.hide()` methods will be helpful here.
-// ● Repeat the above step with the PayPal and BitCoin options so that the selected
-// payment is shown and the others are hidden.
-//$('#payment').next().hide();
-$('#credit-card').hide();
-$('#credit-card').next().hide();
-$('#credit-card').next().next().hide();
+// Selected payment is shown and the others are hidden.
+$('#credit-card').next().hide().next().hide(); // Hide all 
+$('#payment option[value="select_method"]').wrap('<span>').hide() // Hide the “Select Payment Method” `option`
 $('#payment').change(function (){
-    $('#payment option[value="select_method"]').wrap('<span>').hide()
     $( "#payment option:selected" ).each(function() {
         if($(this).text() === 'Credit Card') {
-            $('#credit-card').fadeIn();
-            $('#credit-card').next().hide();
-            $('#credit-card').next().next().hide();
+            $('#credit-card').fadeIn().next().hide().next().hide(); // Show credit card payment section, hide the others
         } else if($(this).text() === 'PayPal'){
-            $('#credit-card').hide();
-            $('#credit-card').next().slideDown();
-            $('#credit-card').next().next().hide();
+            $('#credit-card').hide().next().slideDown().next().hide(); // Show PayPal payment section, hide the others
         } else if($(this).text() === 'Bitcoin'){
-            $('#credit-card').hide();
-            $('#credit-card').next().hide();
-            $('#credit-card').next().next().slideDown();
+            $('#credit-card').hide().next().hide().next().slideDown(); // Show Bitcoin payment section, hide the others
         }
     });
 });
 
+/** 
+ *  Form validation
+*/
+
+// If any of the following validation errors exist, prevent the user from submitting the form:
+//append a span element near each invalid input with a friendly error message.
+
+// Name field can't be blank.
+const nameErrorSpan = $('<span>').text('Please enter your name').hide();  // span to display error message, initially hidden
+$('#name').after(nameErrorSpan);
+
+$('#name').on("input", e => {
+    const name = e.target.value;
+    if (name.length > 0 ) {        
+        $('#name').css('borderColor', '#c1deeb');
+        nameErrorSpan.hide(); // if Name field is not empty, hide error message, textfield border color normal
+        return true;
+    } else {
+        $('#name').css('borderColor', 'red');
+        nameErrorSpan.show();   // If Name field is empty, show error message, textfield border color red
+        return false;
+    }
+});
+
+// Email field must be a validly formatted e-mail address 
+const emailErrorSpan = $('<span>').text('Please enter valid email format').hide(); // span to display error message, initially hidden
+$('#mail').after(emailErrorSpan);
+
+$('#mail').on("input", e => {
+    const mail = e.target.value;                   
+    const valid = /^[^@]+@[^@.]+\.[a-z]+$/i.test(mail); // check if email format is valid
+    emailErrorSpan.show();                           // EXTRA CREDIT: real-time validation- show error message as soon as user starts typing
+    
+    if (valid) {
+        $('#mail').css({'borderColor' : '#c1deeb'}); 
+        emailErrorSpan.hide();
+        return true;                        // if email format is valid, hide error message, textfield border color normal
+    } else {
+        $('#mail').css({'borderColor' : 'red'});
+        emailErrorSpan.show();    
+        return false;                      // if not, show error message, textfield border color red
+    }
+});
+// $('#mail').focusout(function (e) {  // remove error message and border color back to normal when focus is out
+//     if(e.target.value === '') {
+//         $('#mail').css({'borderColor' : '#c1deeb'});
+//         emailErrorSpan.hide();
+//     }
+// });   
+
+
+// User must select at least one checkbox under the "Register for Activities" section of the form.
+
+
+// If the selected payment option is "Credit Card," make sure the user has supplied a Credit Card number, 
+// a Zip Code, and a 3 number CVV value before the form can be submitted.
+
+
+        // Credit Card field should only accept a number between 13 and 16 digits.
+
+
+        // The Zip Code field should accept a 5-digit number.
+
+
+        // The CVV should only accept a number that is exactly 3 digits long.
 
 
