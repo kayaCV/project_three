@@ -14,8 +14,13 @@ button {
 
 body {
   font: 1em/1.5;
-  color: #184f68;
-	background: #accbd9;
+  color: purple;
+  background:
+        linear-gradient(to right, teal, rgb(97, 233, 219), #84ceeb, rgb(4, 219, 4), #e49eff, turquoise, transparent),
+        linear-gradient(to top left, yellow, #00feff, #8860D0, #Fa5ea7, transparent);
+    background-blend-mode: screen;
+	
+
 }
 
 header {
@@ -38,7 +43,7 @@ a {
 
 form {
 	padding: .875em 1.875em 1.875em;
-	background: #85b5ca;
+	background: #1B9CE5;
 }
 
 fieldset,
@@ -92,7 +97,7 @@ input {
 
 input:focus {
 	background: #fff;
-	border-color: #5e97b0;
+	border-color: #79c2ff;
 	transition: border-color .4s, background-color .4s;
 }
 
@@ -102,15 +107,15 @@ input[type="radio"] {
 }
 
 button {
-	color: #fff;
+	color: teal;
 	padding: .55em 1.25em;
-	background: #22627e;
+	background-image: linear-gradient(to top right, #00ffcd, #00feff, #e49eff, #ac8fff, #79c2ff);
 	margin: 1.25em 0 .5em;
 	cursor: pointer;
 }
 
 button:hover {
-	background: #184c62;
+	background: linear-gradient(to bottom left, #00ffcd, #00feff, #e49eff, #ac8fff, #79c2ff);
 }
 
 /* ================================= 
