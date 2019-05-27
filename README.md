@@ -2,9 +2,9 @@
 
 ### Description
 Used jQuery library to enhance the registration form for a fictional conference called "FullStack Conf."
-Added my own code to make the form more user-friendly by:
+Make the form more user-friendly by:
 * adding customized and conditional behavior and interactivity
-* validating user input and providing helpful error messages when the user enters invalid information into the form fields.
+* validating user input and providing error messages when the user enters invalid information into the form fields.
 
 
 ### Extra Credit features

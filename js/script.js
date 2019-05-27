@@ -18,37 +18,38 @@ $('#title').change( function() {
     this.value === 'other' ? $("#other-title").slideDown() : $("#other-title").fadeOut();
 });
 
-/******
+/**
  * T-SHIRT INFO
- ******/
+ */
 
-// Hide #colors-js-puns (T-Shirt Color) text field: EXTRA CREDIT
+// Hide T-Shirt Color menu: EXTRA CREDIT
 $('#colors-js-puns').hide();
 
+// Create div and append after T-Shirt Color
 const $shirtDiv = $('<div>');
 $shirtDiv.addClass('shirt-stuff');
 $('#colors-js-puns').after($shirtDiv);
 
 // Show only T-Shirt color options that match the design selected after Design is selected
 $('#design').change(function() {
-    $('#colors-js-puns').show();
+    $('#colors-js-puns').show(); // Show T-Shirt Color menu: EXTRA CREDIT
     if(this.value === 'js puns') {
-        $shirtDiv.html(`<font size="7"; face="Comic Sans MS">{ ; }</font>`);
-        $('form').css({'outline-color' : 'turquoise', 'outline-style' : 'solid'});
-        $('#colors-js-puns option:contains("Tomato")').removeAttr('selected');
-        $('#colors-js-puns option:contains("Cornflower Blue")').attr('selected', 'true');
-        $('#colors-js-puns option:contains("JS shirt")').hide();
-        $('#colors-js-puns option:contains("JS Puns")').show();
+        $shirtDiv.html(`<font size="7"; face="Comic Sans MS">{ ; }</font>`); // Display symbols on $shirtDiv
+        $('form').css({'outline' : 'turquoise solid thick'}); // Change frorm outline color
+        $('#colors-js-puns option:contains("Tomato")').removeAttr('selected'); // Deselect "Tomato"
+        $('#colors-js-puns option:contains("Cornflower Blue")').attr('selected', 'true'); // Select "Cornflower Blue"
+        $('#colors-js-puns option:contains("JS shirt")').hide(); // Hide all options containing "JS shirt"
+        $('#colors-js-puns option:contains("JS Puns")').show(); // Show all options containing '"JS Puns"
     } else if(this.value === 'heart js'){
-        $shirtDiv.html(`<font size="7"; face="Comic Sans MS">{&hearts;}</font>`);
-        $('form').css({'outline-color' : 'pink', 'outline-style' : 'solid'});
-        $('#colors-js-puns option:contains("Cornflower")').removeAttr('selected');
-        $('#colors-js-puns option:contains("Tomato")').attr('selected', 'true');
-        $('#colors-js-puns option:contains("JS Puns")').hide();
-        $('#colors-js-puns option:contains("JS shirt")').show();
+        $shirtDiv.html(`<font size="7"; face="Comic Sans MS">{&hearts;}</font>`); // Display symbols on $shirtDiv
+        $('form').css({'outline' : 'pink solid thick'}); // Change frorm outline color
+        $('#colors-js-puns option:contains("Cornflower")').removeAttr('selected'); // Deselect "Cornflower Blue"
+        $('#colors-js-puns option:contains("Tomato")').attr('selected', 'true'); // Select "Tomato"
+        $('#colors-js-puns option:contains("JS Puns")').hide(); // Hide all options containing "JS Puns"
+        $('#colors-js-puns option:contains("JS shirt")').show(); // Show all options containing "JS shirt"
     } else {
         $('#colors-js-puns').hide();
-        $shirtDiv.hide();
+        $shirtDiv.hide(); // Hide $shirtDiv if no Design has been chosen
     }
 });
 
@@ -60,19 +61,19 @@ $('#design').change(function() {
 const $newDiv = $('<div>');
 $newDiv.addClass('total-cost');
 $('.activities').append($newDiv);
-let totalActivityCost = 0;
+let totalActivityCost = 0; // Total activity cost initially set to $0
 
 // Disable conflicting activities; Show total activity cost on div created above 
 $('.activities input').change(function(e) {
     $('.activities input').css({'outline' : 'none'});
     const justClicked = $(this).parent();
     const justClickedText = justClicked.text()
-    const begTime = justClickedText.indexOf('—'); // em dash: shift+option+minus (-); regular dash only capture after 4pm
+    const begTime = justClickedText.indexOf('—');
     const endTime = justClickedText.indexOf(',');
     const workshopSchedule = justClickedText.slice(begTime,endTime); // Get day and time for chosen activities
     const $Sign = justClickedText.indexOf('$');   
     const activityPrice = justClickedText.slice($Sign);  
-    const resultingPrice = parseInt(activityPrice.replace(/^[$,]+/g,"")); // Remove $; convert resultingPrice to number​ type    
+    const resultingPrice = parseInt(activityPrice.replace(/^[$,]+/g,"")); // Remove $; convert to number​ type    
     const inputElements = $('.activities input');    // target all of the ‘.activities input’ ​elements
 
     for(let i = 0; i < inputElements.length; i++) {
@@ -123,13 +124,15 @@ $('#payment').change(function (){
  *  Form validation
 */
 
-// If any of the following validation errors exist, prevent the user from submitting the form:
-//append a span element near each invalid input with a friendly error message.
+// Span to display error messages
+function errorMsg(text, sib) {
+    const errorSpan = $('<span>').text(text).hide();  // span to display error message, initially hidden
+    $(sib).after(errorSpan);  // appended after field
+    return errorSpan;
+}
 
-
-const nameErrorSpan = $('<span>').text('Please enter your name').hide();  // span to display error message, initially hidden
-$('#name').after(nameErrorSpan);  // appended after Name field
-
+// Check if Name is valid
+const nameErrorSpan = errorMsg('Please enter your name', '#name'); // Span to display Name error message
 function isNameValid(name) {
     if (name.length > 0 ) {        
         $('#name').css('borderColor', '#c1deeb');
@@ -141,16 +144,16 @@ function isNameValid(name) {
         return false;
     }
 }
-// Name field can't be blank.
+// EXTRA CREDIT: Name live validation
 $('#name').on("input", e => {
     const name = e.target.value;
     isNameValid(name);
 });
 
-// Email field must be a validly formatted e-mail address 
-const emailErrorSpan = $('<span>').text('Please enter valid email format').hide(); // span to display error message, initially hidden
-$('#mail').after(emailErrorSpan);  // appended after Name field
 
+const emailErrorSpan = errorMsg('Please enter valid email format', '#mail')// span to display Email error message
+
+// Check if Email is valid
 function isMailValid(valid) {
     if (valid) {
         $('#mail').css({'borderColor' : '#c1deeb'}); 
@@ -163,14 +166,15 @@ function isMailValid(valid) {
     }
 }
 
+// EXTRA CREDIT: Email live validation
 $('#mail').on("input", e => {
     const mail = e.target.value;                   
     const valid = /^[^@]+@[^@.]+\.[a-z]+$/i.test(mail); // check if email format is valid
-    emailErrorSpan.show();                           // EXTRA CREDIT: real-time validation
+    emailErrorSpan.show();  
     isMailValid(valid);
 });
 
-// User must select at least one checkbox under the "Register for Activities" section of the form.
+// Check if at least one checkbox under the "Register for Activities" is checked
 function activitiesChecked(activities) {
     if(activities.is(':checked')) {
         return true;
@@ -181,16 +185,10 @@ function activitiesChecked(activities) {
     }
 }
 
+const ccErrorSpan = $('<div>').hide();          // span to display Credit Card error messages, initially hidden
+$('#exp-month').prev().before(ccErrorSpan);     // appended after CVV field
 
-// If the selected payment option is "Credit Card," make sure the user has supplied a Credit Card number, 
-// a Zip Code, and a 3 number CVV value before the form can be submitted.
-
-
-        // Credit Card field should only accept a number between 13 and 16 digits.
-
-const ccErrorSpan = $('<div>').hide();          // span to display error message, initially hidden
-$('#exp-month').prev().before(ccErrorSpan);     // appended after Name field
-
+// Check if Card Card is valid
 function ccValid(input,valid,inputValue,text, num1, num2 ) {
     if(valid) {
         $(input).css({'borderColor' : '#c1deeb'}); 
@@ -210,35 +208,28 @@ function ccValid(input,valid,inputValue,text, num1, num2 ) {
     }
 }
 
-// Check if credit card number is valid
-
-
+// Check if Card Number is valid
 function ccNumberValid(ccNum) {                    
-    const isValid = /^[0-9]{13,16}$/.test(ccNum); // check if credit card number is valid
-    ccErrorSpan.show();                           // EXTRA CREDIT: real-time validation
+    const isValid = /^[0-9]{13,16}$/.test(ccNum); // Card Number accepts numbers between 13 to 16 digits
+    ccErrorSpan.show();
     return ccValid('#cc-num', isValid, ccNum, 'Enter a number with 13 to 16 digits', 13, 16);        
 }
 
+// EXTRA CREDIT: 'Card Number' live validation
 $('#cc-num').on("input", e => {
     const cc = $('#cc-num').val();  
-   //console.log(cc);
     ccNumberValid(cc);
-});
-
-// reformat cedit card
-$('#cc-num').blur(function(e){
-    const ccRegex = /^(\d{4})\d(?=\d{4})|\d(?=\d{4})/;
-    let ccNumber = e.target.value;
-    return ccNumber.replace(ccRegex, '$1 $2 $3');                  
 });
 
 // Check if Zip Code is valid
 function zipCodeValid(zipNum) {
     const isZipValid = /^[0-9]{5}$/.test(zipNum); // Zip Code only accepts 5 digit numbers
     const errorMessage = 'Zip codes must contain 5 digits';
-    ccErrorSpan.show();                           // EXTRA CREDIT: real-time validation
+    ccErrorSpan.show(); 
     return ccValid('#zip', isZipValid, zipNum, errorMessage, 5, 5);  
 }
+
+// EXTRA CREDIT: Zip Code live validation
 $('#zip').on("input", e => {
     const zipNum = $('#zip').val();   
     zipCodeValid(zipNum);
@@ -247,44 +238,38 @@ $('#zip').on("input", e => {
 // Check if CVV number is valid 
 function cvvNumberValid(cvvNum) {
     const isCvvValid = /^[0-9]{3}$/.test(cvvNum); // CVV only accepts 3 digit numbers
-    ccErrorSpan.show();                           // EXTRA CREDIT: real-time validation
+    ccErrorSpan.show();
     return  ccValid('#cvv', isCvvValid, cvvNum, 'Cvv codes must contain 3 digits', 3, 3);     
 }
 
+// EXTRA CREDIT: CVV live validation
 $('#cvv').on("input", e => {
     const cvvNum = $('#cvv').val();                   
     cvvNumberValid(cvvNum);            
 });
 
-const buttonErrorSpan = $('<div>').hide();          // span to display error message, initially hidden
-$('button').after(buttonErrorSpan);     // appended after Name field
+const buttonErrorSpan = errorMsg('Please correct highlighted fields', 'button'); // Display message under 'Submit' button
 
+// If selected payment option is "Credit Card," validate all three fields under Credit Card 'Payment Info'
 function ccValidation(cc, zip, cvv) {
-    const ccValid = ccNumberValid(cc);
+    const cardNumValid = ccNumberValid(cc);
     const zipValid = zipCodeValid(zip);
     const cvvValid = cvvNumberValid(cvv);
-    if(ccValid === false | zipValid === false | cvvValid === false)  {
+    if(cardNumValid === false | zipValid === false | cvvValid === false)  {
         ccErrorSpan.text('Please enter valid numbers');
         return false;
     }
 }
-
+// Validate form on submit; display error messages if error present
 $('form').submit(function(e) {
-    const name = $('#name').val();
-    const email = $('#mail').val();
-    const cc = $('#cc-num').val();
-    const zip = $('#zip').val();
-    const cvv = $('#cvv').val();
-    const activities = $('.activities input');
-    const nameValidity = isNameValid(name);
-    const mailValidity = isMailValid(email);
-    const checkActivities = activitiesChecked(activities);
-    const ccValidity = ccValidation(cc,zip,cvv);
+    const nameValidity = isNameValid($('#name').val()); // Validate Name
+    const mailValidity = isMailValid($('#mail').val()); // Validate Email
+    const checkActivities = activitiesChecked($('.activities input')); // Validate Activities
+    const ccValidity = ccValidation($('#cc-num').val(),$('#zip').val(),$('#cvv').val()); // Validate Credit Card fields
  
     if($('#payment option[value="credit card"]').is(':checked') && ccValidity === false 
         || checkActivities === false || nameValidity === false || mailValidity === false) {
         buttonErrorSpan.slideDown();
         e.preventDefault();
-        buttonErrorSpan.text('Please correct highlighted fields');   
     }
 });
