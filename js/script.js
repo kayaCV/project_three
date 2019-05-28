@@ -60,6 +60,7 @@ $('#design').change(function() {
 // Div to hold total activities cost
 const $newDiv = $('<div>');
 $newDiv.addClass('total-cost');
+$newDiv.css('color', 'red');
 $('.activities').append($newDiv);
 let totalActivityCost = 0; // Total activity cost initially set to $0
 
@@ -105,6 +106,10 @@ $('.activities input').change(function(e) {
  * SELECT PAYMENT
  */
 
+const ccErrorSpan = $('<div>').hide();          // span to display Credit Card error messages, initially hidden
+$('#exp-month').prev().before(ccErrorSpan);    // appended after CVV field
+ccErrorSpan.css('color', 'red');
+
 // Selected payment is shown and the others are hidden.
 $('#credit-card').next().hide().next().hide(); // Hide all 
 $('#payment option[value="select_method"]').wrap('<span>').hide() // Hide the “Select Payment Method” `option`
@@ -114,8 +119,14 @@ $('#payment').change(function (){
             $('#credit-card').fadeIn().next().hide().next().hide(); // Show credit card payment section, hide the others
         } else if($(this).text() === 'PayPal'){
             $('#credit-card').hide().next().slideDown().next().hide(); // Show PayPal payment section, hide the others
+            $('#credit-card input').css({'borderColor' : '#c1deeb'}); // Border color normal
+            ccErrorSpan.hide();  // Hide error credit card error messages
+            $('#credit-card input').val(''); // Remove text from Credit Card fields
         } else if($(this).text() === 'Bitcoin'){
             $('#credit-card').hide().next().hide().next().slideDown(); // Show Bitcoin payment section, hide the others
+            ccErrorSpan.hide();  // Hide error credit card error messages
+            $('#credit-card input').css({'borderColor' : '#c1deeb'}); // Border color normal
+            $('#credit-card input').val(''); // Remove text from Credit Card fields
         }
     });
 });
@@ -127,6 +138,7 @@ $('#payment').change(function (){
 // Span to display error messages
 function errorMsg(text, sib) {
     const errorSpan = $('<span>').text(text).hide();  // span to display error message, initially hidden
+    errorSpan.css('color', 'red');
     $(sib).after(errorSpan);  // appended after field
     return errorSpan;
 }
@@ -139,7 +151,7 @@ function isNameValid(name) {
         nameErrorSpan.hide(); // if Name field is not empty, hide error message, textfield border color normal
         return true;
     } else {
-        $('#name').css('borderColor', 'lime');
+        $('#name').css('borderColor', 'red');
         nameErrorSpan.show();   // If Name field is empty, show error message, textfield border color red
         return false;
     }
@@ -160,7 +172,7 @@ function isMailValid(valid) {
         emailErrorSpan.hide();
         return true;                        // if email format is valid, hide error message, textfield border color normal
     } else {
-        $('#mail').css({'borderColor' : 'lime'});
+        $('#mail').css({'borderColor' : 'red'});
         emailErrorSpan.show();    
         return false;                      // if not, show error message, textfield border color yellow
     }
@@ -179,31 +191,29 @@ function activitiesChecked(activities) {
     if(activities.is(':checked')) {
         return true;
     } else {
-        activities.css({'outline-color' : 'lime', 'outline-style' : 'solid'});
+        activities.css({'outline-color' : 'red', 'outline-style' : 'solid'});
         $('.total-cost').text(`Please pick at least one activity`);
         return false;   
     }
 }
 
-const ccErrorSpan = $('<div>').hide();          // span to display Credit Card error messages, initially hidden
-$('#exp-month').prev().before(ccErrorSpan);     // appended after CVV field
 
 // Check if Card Card is valid
 function ccValid(input,valid,inputValue,text, num1, num2 ) {
     if(valid) {
-        $(input).css({'borderColor' : '#c1deeb'}); 
-        ccErrorSpan.hide();    
+        $(input).css({'borderColor' : '#c1deeb'}); // Border color normal
+        ccErrorSpan.hide();    // hide error message
         return true;
     } else {
         if(isNaN(inputValue) === true) {
             ccErrorSpan.text('Enter numbers only'); 
-        } else if(inputValue.length < num1 | inputValue.length > num2) {
+        } else if(inputValue.length < num1 || inputValue.length > num2) {
             ccErrorSpan.text(text); 
         } else {
             ccErrorSpan.text('');
         }
         ccErrorSpan.show(); 
-        $(input).css({'borderColor' : 'lime'});
+        $(input).css({'borderColor' : 'red'});
         return false;
     }
 }
@@ -212,6 +222,7 @@ function ccValid(input,valid,inputValue,text, num1, num2 ) {
 function ccNumberValid(ccNum) {                    
     const isValid = /^[0-9]{13,16}$/.test(ccNum); // Card Number accepts numbers between 13 to 16 digits
     ccErrorSpan.show();
+
     return ccValid('#cc-num', isValid, ccNum, 'Enter a number with 13 to 16 digits', 13, 16);        
 }
 
@@ -266,10 +277,17 @@ $('form').submit(function(e) {
     const mailValidity = isMailValid($('#mail').val()); // Validate Email
     const checkActivities = activitiesChecked($('.activities input')); // Validate Activities
     const ccValidity = ccValidation($('#cc-num').val(),$('#zip').val(),$('#cvv').val()); // Validate Credit Card fields
- 
+  
+    if(!$('#payment option[value="credit card"]').is(':checked')) { // If payment choice is not credit card
+        ccErrorSpan.hide();                                       // Hide credit card error messages
+        $('#credit-card input').css({'borderColor' : '#c1deeb'}); // Border color normal
+    }
+   
     if($('#payment option[value="credit card"]').is(':checked') && ccValidity === false 
         || checkActivities === false || nameValidity === false || mailValidity === false) {
-        buttonErrorSpan.slideDown();
-        e.preventDefault();
+        buttonErrorSpan.slideDown(); // show button error message
+        e.preventDefault();          // prevent form from submitting
     }
 });
+
+ 

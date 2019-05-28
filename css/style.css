@@ -14,7 +14,7 @@ button {
 
 body {
   font: 1em/1.5;
-  color: purple;
+  color: darkblue;
   background:
         linear-gradient(to right, teal, rgb(97, 233, 219), #84ceeb, rgb(4, 219, 4), #e49eff, turquoise, transparent),
         linear-gradient(to top left, yellow, #00feff, #8860D0, #Fa5ea7, transparent);
