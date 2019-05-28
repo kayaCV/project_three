@@ -146,7 +146,8 @@ function errorMsg(text, sib) {
 // Check if Name is valid
 const nameErrorSpan = errorMsg('Please enter your name', '#name'); // Span to display Name error message
 function isNameValid(name) {
-    if (name.length > 0 ) {        
+    const valid = /^[A-Za-z]+$/.test(name)
+    if (valid) {        
         $('#name').css('borderColor', '#c1deeb');
         nameErrorSpan.hide(); // if Name field is not empty, hide error message, textfield border color normal
         return true;
@@ -166,7 +167,8 @@ $('#name').on("input", e => {
 const emailErrorSpan = errorMsg('Please enter valid email format', '#mail')// span to display Email error message
 
 // Check if Email is valid
-function isMailValid(valid) {
+function isMailValid(mail) {
+    const valid = /^[^@]+@[^@.]+\.[a-z]+$/i.test(mail); // check if email format is valid
     if (valid) {
         $('#mail').css({'borderColor' : '#c1deeb'}); 
         emailErrorSpan.hide();
@@ -181,9 +183,9 @@ function isMailValid(valid) {
 // EXTRA CREDIT: Email live validation
 $('#mail').on("input", e => {
     const mail = e.target.value;                   
-    const valid = /^[^@]+@[^@.]+\.[a-z]+$/i.test(mail); // check if email format is valid
+    //const valid = /^[^@]+@[^@.]+\.[a-z]+$/i.test(mail); // check if email format is valid
     emailErrorSpan.show();  
-    isMailValid(valid);
+    isMailValid(mail);
 });
 
 // Check if at least one checkbox under the "Register for Activities" is checked
@@ -274,6 +276,7 @@ function ccValidation(cc, zip, cvv) {
 // Validate form on submit; display error messages if error present
 $('form').submit(function(e) {
     const nameValidity = isNameValid($('#name').val()); // Validate Name
+
     const mailValidity = isMailValid($('#mail').val()); // Validate Email
     const checkActivities = activitiesChecked($('.activities input')); // Validate Activities
     const ccValidity = ccValidation($('#cc-num').val(),$('#zip').val(),$('#cvv').val()); // Validate Credit Card fields
