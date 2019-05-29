@@ -139,17 +139,17 @@ $('#payment').change(function (){
 function errorMsg(text, sib) {
     const errorSpan = $('<span>').text(text).hide();  // span to display error message, initially hidden
     errorSpan.css('color', 'red');
-    $(sib).after(errorSpan);  // appended after field
+    $(sib).after(errorSpan);    // appended after field
     return errorSpan;
 }
 
 // Check if Name is valid
 const nameErrorSpan = errorMsg('Please enter your name', '#name'); // Span to display Name error message
 function isNameValid(name) {
-    const valid = /^[A-Za-z]+$/.test(name)
+    const valid = /^\S[A-Za-z]?/.test(name); // check if name is not empty
     if (valid) {        
         $('#name').css('borderColor', '#c1deeb');
-        nameErrorSpan.hide(); // if Name field is not empty, hide error message, textfield border color normal
+        nameErrorSpan.hide();   // if Name field is not empty, hide error message, textfield border color normal
         return true;
     } else {
         $('#name').css('borderColor', 'red');
